@@ -23,13 +23,17 @@
     </scroll>
     <back-top @click.native="backTop"
               v-show="isShowBackTop" />
-    <detail-bot-bar @addCart="addCart"></detail-bot-bar>
+    <detail-bot-bar @addToCart="addToCart"></detail-bot-bar>
+    <!-- <Toast :message="message"
+           :isShow="isToastShow"></Toast> -->
   </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 import Scroll from 'components/common/scroll/Scroll.vue'
-// import BackTop from "components/content/backTop/BackTop.vue";
+import BackTop from 'components/content/backTop/BackTop.vue'
 import GoodsList from 'components/content/goodsList/GoodsList.vue'
 
 import DetailTabBar from './childCopm/DetailTabBar.vue'
@@ -40,6 +44,7 @@ import DetailGoodsInfo from './childCopm/DetailGoodsInfo.vue'
 import DetailParamInfo from './childCopm/DetailParamInfo.vue'
 import DetailCommentInfo from './childCopm/DetailCommentInfo.vue'
 import DetailBotBar from './childCopm/DetailBotBar.vue'
+import Toast from '@/components/common/toast/Toast.vue'
 
 import { imgRefrashMixin, scrollTopMixin } from '../../common/mixins.js'
 
@@ -58,7 +63,8 @@ export default {
     DetailParamInfo,
     DetailCommentInfo,
     GoodsList,
-    DetailBotBar
+    DetailBotBar,
+    Toast
   },
   data() {
     return {
@@ -73,7 +79,9 @@ export default {
       // isShowBackTop: false,
       themeTopY: [],
       currentIndex: 0,
-      itemImgLister: null
+      itemImgLister: null,
+      message: '',
+      isToastShow: false
     }
   },
   created() {
@@ -105,18 +113,11 @@ export default {
       this.recommendInfo = res.data.data.list
     })
   },
-  // mounted() {
-  // 	//请求数据列表后刷新
-  // 	this.itemImgLister = ()=> {
-  // 		this.$refs.scroll.refresh();
-  // 	}
-  // 	this.$bus.$on('itemImgLoad',this.itemImgLister);
-  // },
+
   methods: {
-    // backTop(){
-    // 	//返回顶部
-    // 	this.$refs.scroll.scrollTo(0,0);
-    // },
+    //映射actions中方法
+    ...mapActions(['addCart']),
+
     goodsImgLoad() {
       this.$refs.scroll.refresh()
       this.themeTopY = []
@@ -146,7 +147,7 @@ export default {
       }
     },
     //加入购物车
-    addCart() {
+    addToCart() {
       // 获取购物车需要展示的信息
       const product = {}
       product.image = this.topBnner[0]
@@ -156,12 +157,26 @@ export default {
       product.iid = this.iid
 
       //将商品添加到购物车里
-      this.$store.dispatch('addCart', product)
+      // this.$store.dispatch('addCart', product).then(res => console.log(res))
+      this.addCart(product).then(res => {
+        //插件方式，全局使用
+        //console.log(this.$toast)
+        //this.$toast.methods.show(res, 2000)
+
+        //普通方式
+        this.isToastShow = true
+        this.message = res
+        // setTimeout(() => {
+        //   this.message = ''
+        //   this.isToastShow = false
+        // }, 2000)
+      })
     }
   },
   destroyed() {
     //取消全局的事件监听
     this.$bus.$off('itemImgLoad', this.itemImgLister)
+    this.$destroy('Toast')
   }
 }
 </script>
