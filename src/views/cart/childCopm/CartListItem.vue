@@ -1,15 +1,13 @@
 <template>
   <div>
     <div class="cart-list-main flex"
-         v-for="item in cartList"
+         v-for="(item,index) in cartList"
          :key="item.iid">
       <div class="cart-list-left flex">
         <input type="checkbox"
                class="check"
-               v-model="item.checked">
-        <!-- <input type="checkbox"
-               class="check"
-               @click="checkItemClick"> -->
+               :class='{checked:item.checked}'
+               @click="checkItemClick(index)">
         <img :src="item.image"
              alt=""
              class="goods-img">
@@ -34,12 +32,12 @@ export default {
         return []
       }
     }
+  },
+  methods: {
+    checkItemClick(index) {
+      this.cartList[index].checked = !this.cartList[index].checked
+    }
   }
-  // methods: {
-  //   checkItemClick() {
-  //     this.cartList.checked = !this.cartList.checked
-  //   }
-  // }
 }
 </script>
 
@@ -58,7 +56,7 @@ export default {
     border-radius: 100%;
     border: 1px solid #ececec;
   }
-  .check:checked {
+  .checked {
     background: url(~assets/images/detail/check_active.png) no-repeat center;
     background-size: cover;
   }
