@@ -21,11 +21,15 @@
       <goods-list :goods="recommendInfo"
                   ref="recommend"></goods-list>
     </scroll>
+    <!-- <Toast :message="message"
+           :isShow="isToastShow"></Toast> -->
+    <div class="toast"
+         v-show='isToastShow'>{{message}}
+    </div>
     <back-top @click.native="backTop"
               v-show="isShowBackTop" />
     <detail-bot-bar @addToCart="addToCart"></detail-bot-bar>
-    <!-- <Toast :message="message"
-           :isShow="isToastShow"></Toast> -->
+
   </div>
 </template>
 
@@ -44,7 +48,7 @@ import DetailGoodsInfo from './childCopm/DetailGoodsInfo.vue'
 import DetailParamInfo from './childCopm/DetailParamInfo.vue'
 import DetailCommentInfo from './childCopm/DetailCommentInfo.vue'
 import DetailBotBar from './childCopm/DetailBotBar.vue'
-import Toast from '@/components/common/toast/Toast.vue'
+// import Toast from '@/components/common/toast/Toast.vue'
 
 import { imgRefrashMixin, scrollTopMixin } from '../../common/mixins.js'
 
@@ -63,8 +67,8 @@ export default {
     DetailParamInfo,
     DetailCommentInfo,
     GoodsList,
-    DetailBotBar,
-    Toast
+    DetailBotBar
+    // Toast
   },
   data() {
     return {
@@ -162,14 +166,13 @@ export default {
         //插件方式，全局使用
         //console.log(this.$toast)
         //this.$toast.methods.show(res, 2000)
-
-        //普通方式
-        this.isToastShow = true
         this.message = res
-        // setTimeout(() => {
-        //   this.message = ''
-        //   this.isToastShow = false
-        // }, 2000)
+        this.isToastShow = true
+        //普通方式
+        setTimeout(() => {
+          this.message = ''
+          this.isToastShow = false
+        }, 1500)
       })
     }
   },
@@ -203,4 +206,18 @@ export default {
   left: 0;
   right: 0;
 }
+.toast {
+  position: fixed;
+  width: auto;
+  left: 50%;
+  top: 50%;
+  padding: 10px;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 999;
+  color: #fff;
+  border-radius: 2px;
+  text-align: center;
+}
+</style>
 </style>
